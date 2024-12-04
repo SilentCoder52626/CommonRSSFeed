@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommonRSSFeed.Features.UserManagement
 {
-    public class LoginEndpoint : Endpoint<LoginRequest,LoginResponse>
+    public class LoginEndpoint : Endpoint<LoginRequest, LoginResponse>
     {
         private readonly AppDBContext _context;
 
@@ -23,10 +23,11 @@ namespace CommonRSSFeed.Features.UserManagement
         }
         public override async Task<LoginResponse> ExecuteAsync(LoginRequest req, CancellationToken ct)
         {
-            var user = await _context.AppUsers.FirstOrDefaultAsync(a => a.Email == req.Email && a.Password == req.Password);
-            if(user == null)
+            var user = await _context.AppUsers.FirstOrDefaultAsync(a => a.Email == req.Email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(req.Password, user.Password))
             {
-                ThrowError("Incorrect username and password.", StatusCodes.Status404NotFound);
+                ThrowError("Incorrect username or password.", StatusCodes.Status404NotFound);
             }
 
             var jwt = JwtBearer.CreateToken(options =>
@@ -38,7 +39,7 @@ namespace CommonRSSFeed.Features.UserManagement
                 options.ExpireAt = DateTime.UtcNow.AddDays(1);
             });
 
-            return new LoginResponse(jwt,user.Email);
+            return new LoginResponse(jwt, user.Email);
         }
     }
 
