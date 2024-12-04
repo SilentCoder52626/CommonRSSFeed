@@ -1,8 +1,6 @@
 ﻿using CommonRSSFeed.DB;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace CommonRSSFeed.Features
 {

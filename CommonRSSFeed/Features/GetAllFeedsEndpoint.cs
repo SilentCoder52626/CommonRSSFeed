@@ -1,4 +1,5 @@
 ﻿using CommonRSSFeed.DB;
+using CommonRSSFeed.Models;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +19,15 @@ namespace CommonRSSFeed.Features
         }
         public override async Task<GetFeedsResponse> ExecuteAsync(CancellationToken ct)
         {
-            var feeds = await _context.Feeds.ToListAsync();
-            var feedDtos = feeds.Select(c => new FeedDto(c.Id, c.Name)).ToList();
+            var feeds = await _context.Feeds.Include(a=>a.Posts).ToListAsync();
+            var feedDtos = feeds.Select(a => new FeedDto()
+            {
+                Id = a.Id,
+                Name = a.Name,
+                
+            }).ToList();
             return new GetFeedsResponse(feedDtos);
         }
     }
     public record GetFeedsResponse(List<FeedDto> feeds);
-
-    public record FeedDto(Guid Id, string Name);
 }

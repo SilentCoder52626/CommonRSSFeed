@@ -60,7 +60,7 @@ namespace CommonRSSFeed.DB
         public required DateTime PublishedAt { get; set; }
 
         public required Guid FeedId { get; set; }
-         public required Feed Feed { get; set; }
+         public Feed Feed { get; set; }
 
     }
 
