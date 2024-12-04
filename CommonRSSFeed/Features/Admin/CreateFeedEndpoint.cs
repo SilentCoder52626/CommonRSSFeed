@@ -22,6 +22,9 @@ namespace CommonRSSFeed.Features.Admin
         {
             try
             {
+                if (_context.Feeds.Any(a => a.Url == req.Url))
+                    ThrowError("Feed already exists.", StatusCodes.Status409Conflict);
+
                 var newFeed = new Feed() { Name = req.Name, Url = req.Url, LastFetchedAt = DateTime.UtcNow };
                 await _context.Feeds.AddAsync(newFeed);
                 await _context.SaveChangesAsync();

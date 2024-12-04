@@ -24,6 +24,9 @@ namespace CommonRSSFeed.Features
             {
                 var user = User.ToTokenUser();
 
+                if (_context.Subscriptions.Any(a => a.FeedId == req.FeedId && a.UserId == user.Id))
+                    ThrowError("Subscribtion already added.", StatusCodes.Status409Conflict);
+
                 var subs = new Subscription()
                 {
                     FeedId = req.FeedId,

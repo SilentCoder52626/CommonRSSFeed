@@ -21,6 +21,9 @@ namespace CommonRSSFeed.Features.UserManagement
         }
         public override async Task<RegisterResponse> ExecuteAsync(RegisterRequest req, CancellationToken ct)
         {
+            var exisitingUser = _context.AppUsers.Any(a => a.Email == req.Email);
+            if (exisitingUser)
+                ThrowError("Email already in use.", StatusCodes.Status409Conflict);
             var newUser = new AppUser {Name = req.Name, Email = req.Email, Password = req.Password, Role = req.Role };
             await _context.AppUsers.AddAsync(newUser);
 
